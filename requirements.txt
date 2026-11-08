@@ -1,0 +1,7 @@
+pypdf==6.21.4
+pypdfium2==5.14.0
+Pillow==13.0.0
+rapidocr_onnxruntime==1.4.4
+torch==2.15.0
+transformers==4.57.6
+pillow-heif==1.8.1
