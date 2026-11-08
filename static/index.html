@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="papertrail-token" content="__TOKEN__" />
+    <title>Papertrail · Your library</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Papertrail home"
+        ><span class="brand-symbol"><i></i><i></i><i></i></span>papertrail<span
+          class="beta"
+          >BETA</span
+        ></a
+      >
+      <div class="workspace">
+        <span class="avatar">P</span>
+        <div>Personal workspace<small>On this computer</small></div>
+        <span class="workspace-lock" data-icon="lock"></span>
+      </div>
+      <div class="nav-label">WORKSPACE</div>
+      <button class="nav selected" id="library-nav">
+        <span data-icon="library"></span>Your library<span id="count">0</span>
+      </button>
+      <div class="source-heading">
+        <span>CONNECTED FOLDERS</span
+        ><button
+          id="sidebar-add"
+          aria-label="Connect another folder"
+          data-icon="plus"
+        ></button>
+      </div>
+      <div id="source-list">
+        <p class="source-empty">
+          Connect a folder to keep your library up to date.
+        </p>
+      </div>
+      <div class="aside-bottom">
+        <div class="privacy-icon" data-icon="shield"></div>
+        <strong>Yours. And only yours.</strong>
+        <p>Your documents stay on this device. No accounts. No cloud.</p>
+        <div class="device-state">
+          <span class="dot"></span><span id="connection">Local workspace</span>
+        </div>
+      </div>
+    </aside>
+    <main>
+      <header>
+        <div>
+          <span class="breadcrumb">Workspace</span><span class="slash">/</span
+          ><span>Your library</span>
+        </div>
+        <div class="header-actions">
+          <button id="manage-sources" class="folder-button">
+            <span data-icon="folder"></span>Folders</button
+          ><button
+            id="help"
+            class="icon-button"
+            aria-label="How Papertrail works"
+            data-icon="help"
+          ></button>
+        </div>
+      </header>
+      <section class="library-heading">
+        <div>
+          <div class="eyebrow">A LITTLE LESS LOST.</div>
+          <h1>Your library<span class="title-dot">.</span></h1>
+          <p>Photos, documents, and the things you thought you lost.</p>
+        </div>
+        <div class="import-actions">
+          <button id="photo-library" class="folder-button">
+            <span data-icon="photo"></span>Import photo library</button
+          ><button id="upload" class="primary">
+            <span data-icon="plus"></span>Add files
+          </button>
+        </div>
+        <input
+          type="file"
+          id="file-picker"
+          multiple
+          accept=".pdf,.png,.jpg,.jpeg,.webp,.heic,.heif,.avif,.tif,.tiff,.bmp,.txt,.md"
+          hidden
+        />
+      </section>
+      <div class="search-line">
+        <form id="search-form" class="search">
+          <span data-icon="search"></span
+          ><input
+            id="query"
+            aria-label="Search documents"
+            placeholder="Try “sports car”, “a beach at sunset”, or a phrase…"
+            autocomplete="off"
+          /><button
+            id="clear-search"
+            type="button"
+            aria-label="Clear search"
+            hidden
+            data-icon="close"
+          ></button
+          ><select id="search-mode" aria-label="Search mode">
+            <option value="all">All matches</option>
+            <option value="visual">Visual only</option>
+            <option value="text">Text only</option></select
+          ><kbd>Ctrl K</kbd>
+        </form>
+        <button id="add" class="folder-button">
+          <span data-icon="folder"></span>Connect folder
+        </button>
+      </div>
+      <div id="vision-banner" hidden>
+        <span data-icon="spark"></span>
+        <div>
+          <strong id="vision-title"></strong>
+          <p id="vision-description"></p>
+        </div>
+        <button id="retry-vision" hidden>Retry visual indexing</button>
+      </div>
+      <div class="library-tools">
+        <div class="tabs" role="group" aria-label="Filter documents">
+          <button class="active" data-filter="all">All files</button
+          ><button data-filter="pdf">PDFs</button
+          ><button data-filter="image">Images</button
+          ><button data-filter="text">Text</button>
+        </div>
+        <div class="view-options">
+          <label class="sort"
+            ><span data-icon="sort"></span
+            ><select id="sort" aria-label="Sort results">
+              <option value="relevance">Default order</option>
+              <option value="name">Name A–Z</option>
+              <option value="recent">Recently updated</option>
+            </select></label
+          >
+          <div class="view-toggle">
+            <button
+              id="grid-view"
+              class="active"
+              aria-label="Grid view"
+              aria-pressed="true"
+              data-icon="grid"
+            ></button
+            ><button
+              id="list-view"
+              aria-label="List view"
+              aria-pressed="false"
+              data-icon="list"
+            ></button>
+          </div>
+        </div>
+      </div>
+      <div class="results-heading">
+        <h2 id="result-title">Your documents</h2>
+        <span id="result-count"></span>
+      </div>
+      <div class="import-status">
+        <div id="status" role="status"></div>
+        <button id="cancel-import" hidden>Stop import</button>
+      </div>
+      <div id="notice" role="alert" hidden></div>
+      <progress id="import-progress" hidden></progress>
+      <details id="issues" hidden>
+        <summary>Some files need attention</summary>
+        <div id="error-list"></div>
+      </details>
+      <section id="results" aria-label="Documents"></section>
+      <button id="load-more" class="folder-button" hidden>
+        Show more results
+      </button>
+      <footer>
+        <span
+          ><span data-icon="lock"></span>Private by design. Searchable by
+          you.</span
+        ><span>PHOTOS · PDF · TEXT · ALWAYS LOCAL</span>
+      </footer>
+    </main>
+    <dialog id="preview">
+      <div class="preview-top">
+        <span>YOUR DOCUMENT</span
+        ><button
+          id="close-preview"
+          class="icon-button"
+          aria-label="Close preview"
+          data-icon="close"
+        ></button>
+      </div>
+      <h2 id="preview-title"></h2>
+      <small id="preview-path"></small>
+      <div class="reader-toolbar">
+        <div class="reader-tabs">
+          <button id="show-original" class="active">Original</button
+          ><button id="show-text">Extracted text</button>
+        </div>
+        <div class="reader-pagination">
+          <button id="previous-page" aria-label="Previous page">←</button
+          ><span id="page-counter"></span
+          ><button id="next-page" aria-label="Next page">→</button>
+        </div>
+        <select id="reader-zoom" aria-label="Preview zoom">
+          <option value="100">Fit width</option>
+          <option value="150">150%</option>
+          <option value="200">200%</option>
+        </select>
+      </div>
+      <div id="matching-pages"></div>
+      <div id="reader-status" role="status"></div>
+      <div id="preview-stage">
+        <img id="preview-image" alt="Selected photo" hidden />
+      </div>
+      <div class="reader-label" hidden>EXTRACTED TEXT</div>
+      <pre id="preview-body" hidden></pre>
+    </dialog>
+    <dialog id="import-dialog" class="center-dialog">
+      <div class="preview-top">
+        <span>BRING EVERYTHING TOGETHER</span
+        ><button
+          id="close-import"
+          class="icon-button"
+          aria-label="Close import"
+          data-icon="close"
+        ></button>
+      </div>
+      <div class="import-art" data-icon="photo"></div>
+      <h2 id="import-title">Import your photo library.</h2>
+      <p id="import-description">
+        Choose a folder and we'll find the photos inside it, including every
+        subfolder. Originals stay exactly where they are.
+      </p>
+      <form id="import-form">
+        <label for="folder">Folder to import</label>
+        <div class="folder-selection">
+          <input
+            id="folder"
+            placeholder="Choose a folder or paste its full path"
+            required
+          /><button id="browse-folder" type="button" class="folder-button">
+            Browse…
+          </button>
+        </div>
+        <button id="use-pictures" type="button" class="text-button">
+          Use my Pictures folder
+        </button>
+        <section id="folder-browser" aria-label="Browse folders" hidden>
+          <div class="folder-browser-top">
+            <strong>Choose a folder</strong
+            ><button
+              id="browser-close"
+              type="button"
+              aria-label="Close folder browser"
+            >
+              ×
+            </button>
+          </div>
+          <div id="browser-locations"></div>
+          <div class="browser-current">
+            <button id="browser-up" type="button" aria-label="Parent folder">
+              ↑</button
+            ><span id="browser-path"></span>
+          </div>
+          <div id="browser-folders"></div>
+          <p id="folder-browser-error" role="alert"></p>
+          <button
+            id="browser-select"
+            type="button"
+            class="folder-button"
+            disabled
+          >
+            Use this folder
+          </button>
+        </section>
+        <label class="scope-choice"
+          >Include<select id="import-scope">
+            <option value="photos">Photos only</option>
+            <option value="all">Photos and documents</option>
+          </select></label
+        ><label class="watch-choice"
+          ><input id="watch-folder" type="checkbox" checked /><span
+            >Keep this folder in sync<small
+              >New, changed, and deleted files update while Papertrail is
+              open.</small
+            ></span
+          ></label
+        >
+        <div class="format-note">
+          JPG, PNG, HEIC/HEIF, WebP, AVIF, TIFF, and BMP. Videos and camera RAW
+          files are not supported.
+        </div>
+        <div id="import-error" role="alert"></div>
+        <button id="start-import" class="primary">Import library</button>
+      </form>
+    </dialog>
+    <dialog id="sources-dialog" class="center-dialog">
+      <div class="preview-top">
+        <span>YOUR CONNECTED FOLDERS</span
+        ><button
+          id="close-sources"
+          class="icon-button"
+          aria-label="Close folders"
+          data-icon="close"
+        ></button>
+      </div>
+      <h2>Always within reach.</h2>
+      <p>
+        Folders stay on your device. Sync runs every 15 seconds while Papertrail
+        is open. Disconnecting a folder keeps its indexed files.
+      </p>
+      <div id="source-cards"></div>
+      <button id="sources-add" class="primary">Connect a folder</button>
+    </dialog>
+    <div id="toast" role="status" hidden>
+      <span id="toast-message"></span
+      ><button id="undo-remove" hidden>Undo</button
+      ><button id="close-toast" aria-label="Dismiss notification">×</button>
+    </div>
+    <dialog id="help-dialog">
+      <div class="preview-top">
+        <span>GETTING STARTED</span
+        ><button
+          id="close-help"
+          class="icon-button"
+          aria-label="Close help"
+          data-icon="close"
+        ></button>
+      </div>
+      <h2>A home for your paper trail.</h2>
+      <p>
+        Add documents using the file picker or drop them anywhere in this
+        window. Files you upload are copied into local app storage.
+      </p>
+      <p>
+        Import photo library reads every supported photo in a chosen folder and
+        its subfolders. Turn on sync to pick up new, changed, and deleted files
+        automatically while the app is running. Pause or disconnect folders from
+        the Folders panel.
+      </p>
+      <p>
+        Search what is in a photo: “car”, “mountains”, or “a dog on the beach”.
+        Visual search runs locally using CLIP, after a one-time model download
+        of about 600 MB. No photo or search is uploaded. Text search still finds
+        exact words in filenames, documents, and scans.
+      </p>
+      <p>
+        Visual matches are approximate, not verified labels. Specific makes and
+        models can be wrong. You can switch to “Text only” or “Visual only” to
+        compare results.
+      </p>
+      <p>
+        Removing a file leaves the original untouched. Undo is available for two
+        minutes. Synced folders respect removals. Upload the file again to
+        re-add it after undo expires. Exact duplicate uploads are skipped. PDFs
+        open in their original layout with page navigation; extracted text is
+        also available.
+      </p>
+    </dialog>
+    <div id="drop-overlay">
+      <span data-icon="upload"></span>
+      <h2>Drop it. Find it later.</h2>
+      <p>Your files stay on this device.</p>
+    </div>
+  </body>
+</html>
