@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="420" viewBox="0 0 1440 420" role="img" aria-labelledby="title desc">
+<title id="title">Papertrail</title><desc id="desc">Find the thing you saved. Private search for photos and documents.</desc>
+<rect width="1440" height="420" rx="24" fill="#252e28"/>
+<path d="M990 0h450v420H990z" fill="#2d382e"/>
+<circle cx="1270" cy="220" r="164" fill="none" stroke="#485742"/>
+<circle cx="1270" cy="220" r="119" fill="none" stroke="#485742"/>
+<g transform="translate(1135 92) rotate(-12 90 110)"><rect x="0" y="12" width="148" height="196" rx="12" fill="#df7955"/><rect x="22" width="148" height="196" rx="12" fill="#fff8e9"/><path d="M53 45h85M53 68h69M53 91h78M53 114h48" fill="none" stroke="#a4ad91" stroke-width="7" stroke-linecap="round"/><circle cx="130" cy="163" r="28" fill="#e5ebd7"/><path d="m117 163 9 9 18-20" fill="none" stroke="#6b8057" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="78" y="92" font-family="Arial,sans-serif" font-weight="bold" font-size="30" fill="#ffcfb5">papertrail</text>
+<text x="76" y="206" font-family="Georgia,serif" font-size="66" fill="#fcf8ef">Find the thing you saved<tspan fill="#eb855f">.</tspan></text>
+<text x="80" y="270" font-family="Arial,sans-serif" font-size="24" fill="#c1cbb8">Private search for your photos and documents.</text>
+<text x="80" y="350" font-family="Arial,sans-serif" font-size="15" letter-spacing="3" fill="#aabb95">LOCAL SEARCH   /   NO ACCOUNT   /   OPEN SOURCE</text>
+</svg>
