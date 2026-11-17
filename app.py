@@ -205,7 +205,9 @@ def walk_files(folder, scope='all'):
 
 def index_folder(folder, scope='all'):
     STATE.setdefault('warnings', [])
+    source_path = str(folder)
     try:
+        folder = Path(folder).resolve()
         files = walk_files(folder, scope)
         # An unavailable root must never be interpreted as every file being deleted.
         if not folder.is_dir():
@@ -228,11 +230,11 @@ def index_folder(folder, scope='all'):
         index_paths(files)
         with closing(db()) as conn, conn:
             error = f"{len(STATE['errors'])} file(s) need attention" if STATE['errors'] else None
-            conn.execute('UPDATE sources SET last_scan=?,error=? WHERE path=?', (time.time(), error, str(folder)))
+            conn.execute('UPDATE sources SET last_scan=?,error=? WHERE path=?', (time.time(), error, source_path))
     except Exception as error:
         STATE['errors'].append({'file': str(folder), 'error': str(error)})
         with closing(db()) as conn, conn:
-            conn.execute('UPDATE sources SET last_scan=?,error=? WHERE path=?', (time.time(), str(error), str(folder)))
+            conn.execute('UPDATE sources SET last_scan=?,error=? WHERE path=?', (time.time(), str(error), source_path))
 
 
 def search(query, mode='all'):
@@ -329,7 +331,8 @@ def source_list():
         root = Path(row['path'])
         row['name'] = root.name or str(root)
         row['available'] = root.is_dir()
-        row['count'] = sum(p.is_relative_to(root) and (row['scope'] != 'photos' or p.suffix.lower() in IMAGES) for p in paths)
+        indexed_root = root.resolve() if row['available'] else root
+        row['count'] = sum(p.is_relative_to(indexed_root) and (row['scope'] != 'photos' or p.suffix.lower() in IMAGES) for p in paths)
     return rows
 
 
@@ -345,10 +348,11 @@ def sync_if_changed():
                 conn.execute('UPDATE sources SET error=? WHERE id=?', ('Folder unavailable; existing index kept.', source['id']))
             continue
         try:
+            indexed_root = root.resolve()
             paths = walk_files(root, source['scope'])
             with closing(db()) as conn:
-                known = {row['path']: row['stamp'] for row in conn.execute('SELECT path,stamp FROM files') if Path(row['path']).is_relative_to(root) and (source['scope'] != 'photos' or Path(row['path']).suffix.lower() in IMAGES)}
-                known.update({row['path']: row['stamp'] for row in conn.execute('SELECT path,stamp FROM failed_files') if Path(row['path']).is_relative_to(root) and (source['scope'] != 'photos' or Path(row['path']).suffix.lower() in IMAGES)})
+                known = {row['path']: row['stamp'] for row in conn.execute('SELECT path,stamp FROM files') if Path(row['path']).is_relative_to(indexed_root) and (source['scope'] != 'photos' or Path(row['path']).suffix.lower() in IMAGES)}
+                known.update({row['path']: row['stamp'] for row in conn.execute('SELECT path,stamp FROM failed_files') if Path(row['path']).is_relative_to(indexed_root) and (source['scope'] != 'photos' or Path(row['path']).suffix.lower() in IMAGES)})
             current = {str(path): f'{path.stat().st_mtime_ns}:{path.stat().st_size}' for path in paths}
             if current != known:
                 start_job(index_folder, root, source['scope'])
