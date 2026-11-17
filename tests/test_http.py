@@ -60,7 +60,7 @@ class HTTPTests(unittest.TestCase):
         status,listing=self.request('/api/browse?path='+quote(str(app.DATA)))
         self.assertEqual(status,200)
         self.assertEqual([item['name'] for item in listing['folders']],['Holiday photos'])
-        self.assertEqual(listing['parent'],str(app.DATA.parent))
+        self.assertEqual(Path(listing['parent']), app.DATA.resolve().parent)
         self.assertEqual(self.request('/api/browse?path='+quote(str(app.DATA/'missing')))[0],400)
 
     def test_malformed_requests_return_json_errors(self):
